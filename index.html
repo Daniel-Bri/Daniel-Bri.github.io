@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Solver Método Gráfico</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js para graficar -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Método Gráfico - Programación Lineal</h1>
+
+    <!-- Función objetivo -->
+    <div class="section">
+      <h2>Función Objetivo</h2>
+      <label for="objectiveType">Optimizar:</label>
+      <select id="objectiveType">
+        <option value="max">Maximizar</option>
+        <option value="min">Minimizar</option>
+      </select>
+      <div id="objectiveInputs" class="inputs-row">
+        <input type="number" placeholder="Coef x1" step="any" id="coefX1">
+        <span>x1 +</span>
+        <input type="number" placeholder="Coef x2" step="any" id="coefX2">
+        <span>x2</span>
+      </div>
+    </div>
+
+    <!-- Restricciones -->
+    <div class="section">
+      <h2>Restricciones</h2>
+      <div id="constraints"></div>
+      <button id="addConstraint">➕ Agregar restricción</button>
+    </div>
+
+    <!-- Botón resolver -->
+    <button id="solveBtn">Resolver</button>
+
+    <!-- Resultados -->
+    <div class="section">
+      <h2>Resultados</h2>
+      <table id="resultsTable">
+        <thead>
+          <tr>
+            <th>x1</th>
+            <th>x2</th>
+            <th>Z</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="optimo"></div>
+    </div>
+
+    <!-- Gráfica -->
+    <div class="section">
+      <h2>Gráfico (2 variables)</h2>
+      <canvas id="chart" width="500" height="500"></canvas>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
