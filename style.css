@@ -63,9 +63,6 @@ button {
   border-radius: 6px;
 }
 
-h3{
-  text-align: center;
-}
 
 button:hover {
   background: #0056b3;
@@ -98,6 +95,10 @@ th {
   margin-top: 10px;
   font-weight: bold;
   color: green;
+}
+
+h3{
+  text-align: center;
 }
 
 /* --- Canvas responsivo --- */
@@ -139,6 +140,7 @@ th {
     font-size: 1.1rem;
   }
 }
+
 
 
 
