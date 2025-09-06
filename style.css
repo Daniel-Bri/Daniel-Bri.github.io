@@ -16,6 +16,7 @@ body {
 
 h1, h2 {
   text-align: center;
+  margin-top: 0;
 }
 
 .section {
@@ -25,13 +26,16 @@ h1, h2 {
 .inputs-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 8px;
 }
 
 input, select, button {
-  padding: 6px 10px;
-  font-size: 14px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 button {
@@ -39,22 +43,27 @@ button {
   border: none;
   background: #007bff;
   color: white;
-  border-radius: 6px;
+  transition: background 0.3s;
 }
 
 button:hover {
   background: #0056b3;
 }
 
+.table-container {
+  overflow-x: auto; /* permite scroll en móvil si no cabe */
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  min-width: 300px;
 }
 
 th, td {
   border: 1px solid #ddd;
-  padding: 6px;
+  padding: 8px;
   text-align: center;
 }
 
@@ -68,3 +77,40 @@ th {
   font-weight: bold;
   color: green;
 }
+
+/* Canvas responsivo */
+#chart {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 600px;
+  margin: auto;
+  display: block;
+}
+
+/* Ajustes responsive */
+@media (max-width: 600px) {
+  .container {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  input, select, button {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  .inputs-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+}
+
+
