@@ -1,114 +1,68 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  margin: 0;
-  padding: 0;
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Solver Método Gráfico</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js para graficar -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Método Gráfico - Programación Lineal</h1>
 
-.container {
-  max-width: 900px;
-  margin: 20px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
-}
+    <!-- Función objetivo -->
+    <div class="section">
+      <h2>Función Objetivo</h2>
+      <label for="objectiveType">Optimizar:</label>
+      <select id="objectiveType">
+        <option value="max">Maximizar</option>
+        <option value="min">Minimizar</option>
+      </select>
+      <div id="objectiveInputs" class="inputs-row">
+        <input type="number" placeholder="Coef x1" step="any" id="coefX1">
+        <span>x1 +</span>
+        <input type="number" placeholder="Coef x2" step="any" id="coefX2">
+        <span>x2</span>
+      </div>
+    </div>
 
-h1, h2 {
-  text-align: center;
-  margin-top: 0;
-}
+    <!-- Restricciones -->
+    <div class="section">
+      <h2>Restricciones</h2>
+      <div id="constraints"></div>
+      <button id="addConstraint">➕ Agregar restricción</button>
+    </div>
 
-.section {
-  margin-bottom: 20px;
-}
+    <!-- Botón resolver -->
+    <button id="solveBtn">Resolver</button>
 
-.inputs-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
-}
+    <!-- Resultados -->
+    <div class="section">
+      <h2>Resultados</h2>
+      <div class="table-container">
+        <table id="resultsTable">
+          <thead>
+            <tr>
+              <th>x1</th>
+              <th>x2</th>
+              <th>Z</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="optimo"></div>
+    </div>
 
-input, select, button {
-  padding: 8px 12px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
+    <!-- Gráfica -->
+    <div class="section">
+      <h2>Gráfico (2 variables)</h2>
+      <canvas id="chart"></canvas>
+    </div>
+  </div>
 
-button {
-  cursor: pointer;
-  border: none;
-  background: #007bff;
-  color: white;
-  transition: background 0.3s;
-}
-
-button:hover {
-  background: #0056b3;
-}
-
-.table-container {
-  overflow-x: auto; /* permite scroll en móvil si no cabe */
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  min-width: 300px;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-
-th {
-  background: #007bff;
-  color: white;
-}
-
-#optimo {
-  margin-top: 10px;
-  font-weight: bold;
-  color: green;
-}
-
-/* Canvas responsivo */
-#chart {
-  width: 100% !important;
-  height: auto !important;
-  max-width: 600px;
-  margin: auto;
-  display: block;
-}
-
-/* Ajustes responsive */
-@media (max-width: 600px) {
-  .container {
-    margin: 10px;
-    padding: 15px;
-  }
-
-  input, select, button {
-    width: 100%;
-    font-size: 0.95rem;
-  }
-
-  .inputs-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  h2 {
-    font-size: 1.2rem;
-  }
-}
+  <script src="script.js"></script>
+</body>
+</html>
