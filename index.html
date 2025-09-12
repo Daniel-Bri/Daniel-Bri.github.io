@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Solver Método Gráfico</title>
@@ -8,6 +9,7 @@
   <!-- Chart.js para graficar -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
   <div class="container">
     <h1>Método Gráfico - Programación Lineal</h1>
@@ -15,28 +17,35 @@
     <!-- Función objetivo -->
     <div class="section">
       <h2>Función Objetivo</h2>
-      <label for="objectiveType">Optimizar:</label>
-      <select id="objectiveType">
-        <option value="max">Maximizar</option>
-        <option value="min">Minimizar</option>
-      </select>
-      <div id="objectiveInputs" class="inputs-row">
-        <input type="number" placeholder="Coef x1" step="any" id="coefX1">
-        <span>x1 +</span>
-        <input type="number" placeholder="Coef x2" step="any" id="coefX2">
-        <span>x2</span>
+      <div class="objective-box">
+        <label for="objectiveType">Optimizar:</label>
+        <select id="objectiveType">
+          <option value="max">Maximizar</option>
+          <option value="min">Minimizar</option>
+        </select>
+        <div id="objectiveInputs" class="inputs-row objective-center">
+          <span>Z = </span>
+          <input type="number" placeholder="Coef x1" step="any" id="coefX1">
+          <span>x1 +</span>
+          <input type="number" placeholder="Coef x2" step="any" id="coefX2">
+          <span>x2</span>
+        </div>
       </div>
     </div>
 
     <!-- Restricciones -->
     <div class="section">
       <h2>Restricciones</h2>
-      <div id="constraints"></div>
-      <button id="addConstraint">➕ Agregar restricción</button>
+      <div id="constraints" class="center"></div>
+      <button id="addConstraint"> + Agregar restricción</button>
+      <p class="note">Se incluyen automáticamente las restricciones</p>
+      <span>x1 ≥ 0, x2 ≥ 0</span>
     </div>
 
     <!-- Botón resolver -->
-    <button id="solveBtn">Resolver</button>
+    <div class="section center">
+      <button id="solveBtn">Resolver</button>
+    </div>
 
     <!-- Resultados -->
     <div class="section">
@@ -45,6 +54,7 @@
         <table id="resultsTable">
           <thead>
             <tr>
+              <th>Vértice</th>
               <th>x1</th>
               <th>x2</th>
               <th>Z</th>
@@ -56,11 +66,12 @@
       <div id="optimo"></div>
     </div>
 
-    <!-- Gráfica -->
+    <!-- Gráfico -->
     <div class="section">
       <h2>Gráfico (2 variables)</h2>
       <canvas id="chart"></canvas>
     </div>
+
     <div class="Espacio_blanco_final">
       <h3>Autores</h3>
     </div>
@@ -68,6 +79,5 @@
 
   <script src="script.js"></script>
 </body>
+
 </html>
-
-
