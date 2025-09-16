@@ -201,3 +201,18 @@ h3 {
     padding: 3px;
   }
 }
+.removeConstraint {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 3px 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.removeConstraint:hover {
+  background: #a71d2a;
+}
+
+
