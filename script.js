@@ -115,7 +115,7 @@ function addConstraintRow() {
       <option value="equal">=</option>
     </select>
     <input type="number" placeholder="Valor" step="any" class="rhs" style="text-align:center;">
-    <button class="removeConstraint" title="Quitar restricción">Quitar</button>
+    <button class="removeConstraint" title="Quitar restricción">❌</button>
   `;
 
   // evento para borrar fila
@@ -154,42 +154,38 @@ solveBtn.addEventListener("click", () => {
     }
   });
 
-  // Líneas de restricciones (solo las del usuario)
-const colors = ["#FF5733", "#33A1FF", "#28A745", "#FFC300", "#8E44AD"];
-constraints.forEach((c, i) => {
-  if (c.c1 === 0 && c.c2 === 0) return;
+  // Restricciones automáticas x1>=0, x2>=0
+  constraints.push({ c1: 1, c2: 0, rhs: 0, ineq: "min" });
+  constraints.push({ c1: 0, c2: 1, rhs: 0, ineq: "min" });
 
-  const lineData = [];
-  const maxX = Math.max(...solucion.feasiblePolygon.map(p => p.x), 5);
-  const maxY = Math.max(...solucion.feasiblePolygon.map(p => p.y), 5);
+  const metodo = new MetodoGrafico(coefX1, coefX2, objectiveType, constraints);
+  const solucion = metodo.solve();
 
-  for (let x = 0; x <= maxX + 2; x += 0.5) {
-    if (c.c2 !== 0) {
-      let y = (c.rhs - c.c1 * x) / c.c2;
-      if (y >= 0 && y <= maxY + 2) lineData.push({ x, y });
-    } else if (c.c1 !== 0) {
-      // Restricción vertical tipo x = rhs/c1
-      let xVal = c.rhs / c.c1;
-      if (xVal >= 0 && xVal <= maxX + 2) {
-        lineData.push({ x: xVal, y: 0 });
-        lineData.push({ x: xVal, y: maxY + 2 });
-      }
-    }
+  // llenar tabla con vértices A,B,C...
+  tableBody.innerHTML = "";
+  const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  solucion.evaluations.forEach((p, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${letras[index]}</td>
+      <td>${p.x.toFixed(2)}</td>
+      <td>${p.y.toFixed(2)}</td>
+      <td>${p.Z.toFixed(2)}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+
+  // mostrar óptimo
+  if (solucion.bestPoint) {
+    optimoBox.textContent =
+      `Óptimo: x1=${solucion.bestPoint.x.toFixed(2)}, ` +
+      `x2=${solucion.bestPoint.y.toFixed(2)}, ` +
+      `Z=${solucion.bestValue.toFixed(2)}`;
+  } else {
+    optimoBox.textContent = "No se encontró solución factible.";
   }
 
-  if (lineData.length > 0) {
-    datasets.push({
-      label: `Restricción ${i + 1}`,
-      data: lineData,
-      type: "line",
-      borderColor: colors[i % colors.length],
-      borderWidth: 2,
-      fill: false,
-      pointRadius: 0
-    });
-  }
-});
-
+  drawChart(constraints, solucion, letras);
 });
 
 function drawChart(constraints, solucion, letras) {
@@ -210,39 +206,35 @@ function drawChart(constraints, solucion, letras) {
     });
   }
 
- // Líneas de restricciones (colores sólidos distintos)
-const colors = ["#FF5733", "#33A1FF", "#28A745", "#FFC300", "#8E44AD"];
-constraints.forEach((c, i) => {
-  // ignorar restricciones automáticas x1>=0, x2>=0
-  if ((c.c1 === 1 && c.c2 === 0 && c.rhs === 0) || (c.c1 === 0 && c.c2 === 1 && c.rhs === 0)) {
-    return;
-  }
+  // Líneas de restricciones
+  const colors = ["#FF5733", "#33A1FF", "#28A745", "#FFC300", "#8E44AD"];
+  const allPoints = [...solucion.feasiblePolygon];
+  if (solucion.bestPoint) allPoints.push(solucion.bestPoint);
 
-  const lineData = [];
-  const maxX = Math.max(...solucion.feasiblePolygon.map(p => p.x), 5) + 2;
-const maxY = Math.max(...solucion.feasiblePolygon.map(p => p.y), 5) + 2;
+  // Determinar máximos dinámicos
+  const maxX = Math.ceil(Math.max(...allPoints.map(p => p.x), 1) * 1.1);
+  const maxY = Math.ceil(Math.max(...allPoints.map(p => p.y), 1) * 1.1);
 
-
-  for (let x = 0; x <= maxX + 2; x += 0.5) {
-    if (c.c2 !== 0) {
-      let y = (c.rhs - c.c1 * x) / c.c2;
-      if (y >= 0 && y <= maxY + 2) lineData.push({ x, y });
+  constraints.forEach((c, i) => {
+    const lineData = [];
+    for (let x = 0; x <= maxX; x += maxX/200) {
+      if (c.c2 !== 0) {
+        let y = (c.rhs - c.c1 * x) / c.c2;
+        if (y >= 0 && y <= maxY) lineData.push({ x, y });
+      }
     }
-  }
-
-  if (lineData.length > 0) {
-    datasets.push({
-      label: `Restricción ${i + 1}`,
-      data: lineData,
-      type: "line",
-      borderColor: colors[i % colors.length],
-      borderWidth: 2,
-      fill: false,
-      pointRadius: 0
-    });
-  }
-});
-
+    if (lineData.length > 0) {
+      datasets.push({
+        label: `Restricción ${i + 1}`,
+        data: lineData,
+        type: "line",
+        borderColor: colors[i % colors.length],
+        borderWidth: 2,
+        fill: false,
+        pointRadius: 0
+      });
+    }
+  });
 
   // Vértices
   datasets.push({
@@ -282,16 +274,8 @@ const maxY = Math.max(...solucion.feasiblePolygon.map(p => p.y), 5) + 2;
         x: { beginAtZero: true, max: maxX },
         y: { beginAtZero: true, max: maxY }
       }
-
     }
   });
 }
-
-
-
-
-
-
-
 
 
