@@ -154,12 +154,21 @@ solveBtn.addEventListener("click", () => {
     }
   });
 
-  // Restricciones automáticas x1>=0, x2>=0
-  constraints.push({ c1: 1, c2: 0, rhs: 0, ineq: "min" });
-  constraints.push({ c1: 0, c2: 1, rhs: 0, ineq: "min" });
-
-  const metodo = new MetodoGrafico(coefX1, coefX2, objectiveType, constraints);
+   // Restricciones ingresadas por el usuario
+  const userConstraints = [...constraints];
+  
+  // Restricciones automáticas x1>=0, x2>=0 (solo para el cálculo, no para graficar)
+  const metodoConstraints = [
+    ...constraints,
+    { c1: 1, c2: 0, rhs: 0, ineq: "min" },
+    { c1: 0, c2: 1, rhs: 0, ineq: "min" }
+  ];
+  
+  const metodo = new MetodoGrafico(coefX1, coefX2, objectiveType, metodoConstraints);
   const solucion = metodo.solve();
+  
+  // pasar solo las restricciones reales al gráfico
+  drawChart(userConstraints, solucion, letras);
 
   // llenar tabla con vértices A,B,C...
   tableBody.innerHTML = "";
@@ -280,6 +289,7 @@ constraints.forEach((c, i) => {
     }
   });
 }
+
 
 
 
