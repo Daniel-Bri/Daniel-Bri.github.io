@@ -115,7 +115,7 @@ function addConstraintRow() {
       <option value="equal">=</option>
     </select>
     <input type="number" placeholder="Valor" step="any" class="rhs" style="text-align:center;">
-    <button class="removeConstraint" title="Quitar restricción">❌</button>
+    <button class="removeConstraint" title="Quitar restricción">Quitar</button>
   `;
 
   // evento para borrar fila
@@ -277,6 +277,7 @@ function drawChart(constraints, solucion, letras) {
     }
   });
 }
+
 
 
 
