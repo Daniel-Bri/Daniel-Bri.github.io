@@ -191,7 +191,7 @@ const solucion = metodo.solve();
     optimoBox.textContent = "No se encontró solución factible.";
   }
 
-  drawChart(constraints, solucion, letras);
+  drawChart(userConstraints, solucion, letras);
 });
 
 function drawChart(constraints, solucion, letras) {
@@ -288,6 +288,7 @@ const maxY = Math.max(...solucion.feasiblePolygon.map(p => p.y), 5) + 2;
     }
   });
 }
+
 
 
 
