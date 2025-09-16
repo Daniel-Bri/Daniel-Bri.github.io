@@ -154,21 +154,18 @@ solveBtn.addEventListener("click", () => {
     }
   });
 
-   // Restricciones ingresadas por el usuario
+  // Guardamos las restricciones reales del usuario
   const userConstraints = [...constraints];
   
-  // Restricciones automáticas x1>=0, x2>=0 (solo para el cálculo, no para graficar)
+  // Añadimos las automáticas solo para cálculo
   const metodoConstraints = [
     ...constraints,
-    { c1: 1, c2: 0, rhs: 0, ineq: "min" },
-    { c1: 0, c2: 1, rhs: 0, ineq: "min" }
+    { c1: 1, c2: 0, rhs: 0, ineq: "min" }, // x1 ≥ 0
+    { c1: 0, c2: 1, rhs: 0, ineq: "min" }  // x2 ≥ 0
   ];
-  
-  const metodo = new MetodoGrafico(coefX1, coefX2, objectiveType, metodoConstraints);
-  const solucion = metodo.solve();
-  
-  // pasar solo las restricciones reales al gráfico
-  drawChart(userConstraints, solucion, letras);
+
+const metodo = new MetodoGrafico(coefX1, coefX2, objectiveType, metodoConstraints);
+const solucion = metodo.solve();
 
   // llenar tabla con vértices A,B,C...
   tableBody.innerHTML = "";
@@ -224,8 +221,9 @@ constraints.forEach((c, i) => {
   }
 
   const lineData = [];
-  const maxX = Math.max(...solucion.feasiblePolygon.map(p => p.x), 5);
-  const maxY = Math.max(...solucion.feasiblePolygon.map(p => p.y), 5);
+  const maxX = Math.max(...solucion.feasiblePolygon.map(p => p.x), 5) + 2;
+const maxY = Math.max(...solucion.feasiblePolygon.map(p => p.y), 5) + 2;
+
 
   for (let x = 0; x <= maxX + 2; x += 0.5) {
     if (c.c2 !== 0) {
@@ -286,9 +284,11 @@ constraints.forEach((c, i) => {
         x: { beginAtZero: true, max: maxX },
         y: { beginAtZero: true, max: maxY }
       }
+
     }
   });
 }
+
 
 
 
