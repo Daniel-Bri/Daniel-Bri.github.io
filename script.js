@@ -189,8 +189,8 @@ function drawChart(constraints, solucion, letras) {
   if (solucion.feasiblePolygon.length > 2) {
     datasets.push({
       label: "Región factible",
-      data: solucion.feasiblePolygon,
-      backgroundColor: "rgba(0, 200, 0, 0.15)", // suave
+      data: [...solucion.feasiblePolygon, solucion.feasiblePolygon[0]], // cerrar polígono
+      backgroundColor: "rgba(0, 200, 0, 0.2)",
       borderColor: "rgba(0, 200, 0, 0.6)",
       type: "line",
       fill: true,
@@ -198,16 +198,21 @@ function drawChart(constraints, solucion, letras) {
     });
   }
 
-  // Líneas de restricciones (colores sólidos distintos)
+  // Líneas de restricciones
   const colors = ["#FF5733", "#33A1FF", "#28A745", "#FFC300", "#8E44AD"];
+  const allPoints = [...solucion.feasiblePolygon];
+  if (solucion.bestPoint) allPoints.push(solucion.bestPoint);
+
+  // Determinar máximos dinámicos
+  const maxX = Math.ceil(Math.max(...allPoints.map(p => p.x), 1) * 1.1);
+  const maxY = Math.ceil(Math.max(...allPoints.map(p => p.y), 1) * 1.1);
+
   constraints.forEach((c, i) => {
-    if (c.c1 === 0 && c.c2 === 0) return;
     const lineData = [];
-    const maxX = 20;
-    for (let x = 0; x <= maxX; x += 0.5) {
+    for (let x = 0; x <= maxX; x += maxX/200) {
       if (c.c2 !== 0) {
         let y = (c.rhs - c.c1 * x) / c.c2;
-        if (y >= 0 && y <= 20) lineData.push({ x, y });
+        if (y >= 0 && y <= maxY) lineData.push({ x, y });
       }
     }
     if (lineData.length > 0) {
@@ -223,12 +228,10 @@ function drawChart(constraints, solucion, letras) {
     }
   });
 
-  // Vértices con letras
+  // Vértices
   datasets.push({
     label: "Vértices",
-    data: solucion.evaluations.map((p, i) =>
-      ({ x: p.x, y: p.y, label: letras[i] })
-    ),
+    data: solucion.evaluations.map((p, i) => ({ x: p.x, y: p.y, label: letras[i] })),
     backgroundColor: "blue",
     pointRadius: 6
   });
@@ -242,12 +245,6 @@ function drawChart(constraints, solucion, letras) {
       pointRadius: 8
     });
   }
-
-  // Escala ajustada
-  const allX = solucion.feasiblePolygon.map(p => p.x);
-  const allY = solucion.feasiblePolygon.map(p => p.y);
-  const maxX = allX.length ? Math.max(...allX) : 5;
-  const maxY = allY.length ? Math.max(...allY) : 5;
 
   chart = new Chart(chartCanvas, {
     type: "scatter",
@@ -266,9 +263,11 @@ function drawChart(constraints, solucion, letras) {
         }
       },
       scales: {
-        x: { beginAtZero: true, max: maxX + 2 },
-        y: { beginAtZero: true, max: maxY + 2 }
+        x: { beginAtZero: true, max: maxX },
+        y: { beginAtZero: true, max: maxY }
       }
     }
   });
 }
+
+
