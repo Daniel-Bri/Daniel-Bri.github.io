@@ -52,8 +52,12 @@ class MetodoGrafico {
       }
     });
 
-    // incluir origen si es factible
-    if (this.isFeasible({ x: 0, y: 0 })) points.push({ x: 0, y: 0 });
+    
+    // incluir origen solo si es max y factible
+    if (this.objectiveType === "max" && this.isFeasible({ x: 0, y: 0 })) {
+      points.push({ x: 0, y: 0 });
+    }
+
 
     // eliminar duplicados
     points = points.filter(
@@ -185,7 +189,14 @@ solveBtn.addEventListener("click", () => {
     optimoBox.textContent = "No se encontró solución factible.";
   }
 
-  drawChart(constraints, solucion, letras);
+  // graficar solo restricciones reales
+  drawChart(rows.length ? Array.from(rows).map(r => ({
+  c1: parseFloat(r.querySelector(".coefX1").value) || 0,
+  c2: parseFloat(r.querySelector(".coefX2").value) || 0,
+  rhs: parseFloat(r.querySelector(".rhs").value) || 0,
+  ineq: r.querySelector(".ineq").value
+  })) : [], solucion, letras);
+
 });
 
 function drawChart(constraints, solucion, letras) {
@@ -277,5 +288,6 @@ function drawChart(constraints, solucion, letras) {
     }
   });
 }
+
 
 
