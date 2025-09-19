@@ -6,7 +6,7 @@ class MetodoGrafico {
     this.constraints = constraints;     // array de objetos {c1,c2,rhs,ineq}
   }
 
-  getIntersection(c1, c2) {
+  calcularInterseccion(c1, c2) {
     let det = c1.c1 * c2.c2 - c2.c1 * c1.c2;
     if (Math.abs(det) < 1e-9) return null;
     let x = (c1.rhs * c2.c2 - c2.rhs * c1.c2) / det;
@@ -14,7 +14,7 @@ class MetodoGrafico {
     return { x, y };
   }
 
-  isFeasible(p) {
+  cumpleRestricciones(p) {
     if (!p || p.x < -1e-6 || p.y < -1e-6) return false;
     return this.constraints.every(c => {
       let val = c.c1 * p.x + c.c2 * p.y;
@@ -25,18 +25,18 @@ class MetodoGrafico {
     });
   }
 
-  evaluateObjective(p) {
+  evaluarFuncionObjetivo(p) {
     return this.coefX1 * p.x + this.coefX2 * p.y;
   }
 
-  solve() {
+  resolver() {
     let points = [];
 
     // intersecciones entre restricciones
     for (let i = 0; i < this.constraints.length; i++) {
       for (let j = i + 1; j < this.constraints.length; j++) {
-        let p = this.getIntersection(this.constraints[i], this.constraints[j]);
-        if (this.isFeasible(p)) points.push(p);
+        let p = this.calcularInterseccion(this.constraints[i], this.constraints[j]);
+        if (this.cumpleRestricciones(p)) points.push(p);
       }
     }
 
@@ -44,17 +44,17 @@ class MetodoGrafico {
     this.constraints.forEach(c => {
       if (c.c1 !== 0) {
         let p = { x: c.rhs / c.c1, y: 0 };
-        if (this.isFeasible(p)) points.push(p);
+        if (this.cumpleRestricciones(p)) points.push(p);
       }
       if (c.c2 !== 0) {
         let p = { x: 0, y: c.rhs / c.c2 };
-        if (this.isFeasible(p)) points.push(p);
+        if (this.cumpleRestricciones(p)) points.push(p);
       }
     });
 
     
     // incluir origen solo si es max y factible
-    if (this.objectiveType === "max" && this.isFeasible({ x: 0, y: 0 })) {
+    if (this.objectiveType === "max" && this.cumpleRestricciones({ x: 0, y: 0 })) {
       points.push({ x: 0, y: 0 });
     }
 
@@ -82,7 +82,7 @@ class MetodoGrafico {
     let evaluations = [];
 
     points.forEach(p => {
-      let val = this.evaluateObjective(p);
+      let val = this.evaluarFuncionObjetivo(p);
       evaluations.push({ ...p, Z: val });
       if (this.objectiveType === "max" && val > bestValue) {
         bestValue = val; bestPoint = p;
@@ -105,7 +105,7 @@ const optimoBox = document.getElementById("optimo");
 const chartCanvas = document.getElementById("chart");
 let chart;
 
-function addConstraintRow() {
+function insertarRestricción() {
   const row = document.createElement("div");
   row.className = "inputs-row constraint-row";
   row.innerHTML = `
@@ -132,9 +132,9 @@ function addConstraintRow() {
 
 
 // Al iniciar, agregamos una fila por defecto
-addConstraintRow();
+insertarRestricción();
 
-addConstraintBtn.addEventListener("click", addConstraintRow);
+addConstraintBtn.addEventListener("click", insertarRestricción);
 
 solveBtn.addEventListener("click", () => {
   const coefX1 = parseFloat(document.getElementById("coefX1").value) || 0;
@@ -142,7 +142,7 @@ solveBtn.addEventListener("click", () => {
   const objectiveType = document.getElementById("objectiveType").value;
 
   const rows = constraintsDiv.querySelectorAll(".constraint-row");
-  const constraints = [];
+  const constraints = []; 
 
   rows.forEach(r => {
     const c1 = parseFloat(r.querySelector(".coefX1").value);
@@ -163,7 +163,7 @@ solveBtn.addEventListener("click", () => {
   constraints.push({ c1: 0, c2: 1, rhs: 0, ineq: "min" });
 
   const metodo = new MetodoGrafico(coefX1, coefX2, objectiveType, constraints);
-  const solucion = metodo.solve();
+  const solucion = metodo.resolver();
 
   // llenar tabla con vértices A,B,C...
   tableBody.innerHTML = "";
@@ -190,7 +190,7 @@ solveBtn.addEventListener("click", () => {
   }
 
   // graficar solo restricciones reales
-  drawChart(rows.length ? Array.from(rows).map(r => ({
+  mostrarGráfico(rows.length ? Array.from(rows).map(r => ({
   c1: parseFloat(r.querySelector(".coefX1").value) || 0,
   c2: parseFloat(r.querySelector(".coefX2").value) || 0,
   rhs: parseFloat(r.querySelector(".rhs").value) || 0,
@@ -199,7 +199,7 @@ solveBtn.addEventListener("click", () => {
 
 });
 
-function drawChart(constraints, solucion, letras) {
+function mostrarGráfico(constraints, solucion, letras) {
   if (chart) chart.destroy();
 
   const datasets = [];
@@ -288,6 +288,5 @@ function drawChart(constraints, solucion, letras) {
     }
   });
 }
-
 
 
